@@ -1,0 +1,59 @@
+#####################################################################
+######################### CHUNKER HISTORY ###########################
+#####################################################################
+
+0.1	Imported source files from old repository and created
+	wrapper script, README and Config files.
+
+0.2	- In Version 0.1, the chunker defaulted to a zerogram 
+	language model regardless of the language model option set.
+	This bug, which led to poor performance particularly on some
+	languages is now fixed.
+	- Refactored a number of classes in the source code.
+	- Added French benchmark (fra-FR.short).
+
+0.3	- Added --force option
+	- Added sampa benchmark (sampa.short)
+	- CEPLIFTER option added to HCopy feature extraction
+	- Fixed a bug that meant that in cases where bpf == outfile,
+	the output was only partial.
+
+0.4	- Fixed error handling by wrapper script.
+	- Some changes to README.
+
+0.5	- Fixed a bug that led to a seg fault in cases where the KAN
+	tier's first entry is a tag or pause.
+	- Moved this History section to a separate file HISTORY.
+	- Help page now lists all available languages.
+	- Set MAXNUMTHREADS option default to 1 in master.config.
+
+0.6	- version is now outputted to stdout (was stderr before)
+
+0.7	- Fixed a bug that led to a seg fault in the boost phase
+	in cases where the KAN tier's first entry is an unknown
+	tag (0.5 had only fixed cases of known tags such as <p:>)
+
+0.8	- The chunker now gets audio duration information from
+	its internal downsampled file (and not the original
+	file provided by the user). This should prevent issues
+	in cases where the original audio is corrupted (e.g
+	by a premature EOF).
+	- Reduced boost_minanchorlength to 4. Reason: Without
+	multithreading, the chunker gets really slow in cases
+	where the boost phase falls through, with runtimes
+	above the timeout limit. This measurs should prevent 
+	this from happening too often. Users with high-risk 
+	input (e.g. incompletely transcribed audio files) will 
+	have to turn the boost phase off for now.
+
+0.9	- Added --insymbols parameter. If set to ipa, the chunker
+	now accepts IPA symbols (provided that they are in map
+	/usr/local/maus.root/PARAM.SAMPA/KANINVENTAR.inv) 
+	- Benchmark is now also testing the fast aligner
+
+0.10	- Bugfix: SAM entry in BPF was always 16000; now it
+	corresponds to the actual sampling rate of the input
+	audio
+
+0.11	- Fix for windows users: Chunker can now handle input
+	with carriage returns

@@ -1,0 +1,452 @@
+#####################################################################
+#####################################################################
+###################### DOCUMENTATION CHUNKER ########################
+#####################################################################
+#####################################################################
+
+This file contains documentation for the chunker, an automatic chunk 
+segmentation tool for long transcribed audio recordings. It contains
+the following sections:
+
+1) General information
+2) This directory
+3) Usage
+4) Parameters
+4.1) Compulsory parameters
+4.2) Basic parameters
+4.3) Expert parameters
+4.4) Binary parameters
+4.5) Development parameters
+5) References
+
+#####################################################################
+######################### GENERAL DESCRIPTION #######################
+#####################################################################
+
+The chunker tool is primarily a pre-processor for the Munich
+Automatic Segmentation Tool [1]. Its inputs consist of a WAVE mono
+audio file and a BPF file containing a canonical pronunciation
+tier, as produced by G2P [2]. While it can be used on any audio -
+transcription pair, its main use is on recordings that are longer
+than a approximately five minutes. For more information, see [3].
+
+#####################################################################
+########################### THIS DIRECTORY ##########################
+#####################################################################
+
+This directory contains the following files and directories:
+
+chunker.binary	C++ binary containing the actual program.
+		This binary can be called directly (see section
+		Binary parameters below)
+
+chunker		Wrapper Python script for user-friendly usage. 
+		This script accepts an additional meta parameter
+		--language and sets a number of other parameters
+		accordingly. To be used within the MAUS package.
+
+README		This file		
+
+HISTORY		Version log
+
+Config		Directoy containing config files (i.e. lists of
+		default settings). These are:
+		
+		master.config	General defaults, compulsory
+		<code>.config	(where <code> is a language code)
+				Not necessarily present for every 
+				language, but where it is, it
+				overrides the defaults in
+				master.config
+
+chunker.bench	Python script carrying out benchmark tests.
+		To run short German test case:
+		./chunker.bench
+		To run all test cases:
+		./chunker.bench all
+		To run specific test case:
+		./chunker.bench <file prefix>
+
+Bench		Directory containing files for benchmarking				
+
+#####################################################################
+# DO NOT DELETE THIS <help> TAG #####################################
+#####################################################################
+
+<help>
+
+#####################################################################
+############################# USAGE #################################
+#####################################################################
+
+chunker
+chunker	--help
+chunker	--version
+chunker	--language <e.g. deu-DE> --audio <path to audio> 
+	--bpf <path to BPF> --outfile <path to output file> 
+	[--verbose <0|1|2|3>] [--minchunkduration <int>]
+	[--minanchorlength <int>] [--silenceonly <int>]
+	[--boost <true|false>] [--force <true|false|rescue>]
+
+#####################################################################
+######################### COMPULSORY PARAMETERS #####################
+#####################################################################
+
+--audio			<PATH TO AUDIO FILE>
+
+	Path to the input audio file that should be chunk segmented.
+	This file must be a valid mono wave file.
+
+--bpf			<PATH TO BPF FILE>
+
+	Path to the input BPF file. The BPF file should contain a KAN
+	tier with the canonical pronunciation of the transcription. 
+	Any other tiers are ignored. To derive this tier from an 
+	orthographic transcription, you can use the G2P tool.
+
+--outfile		<PATH TO OUTPUT FILE>
+
+	Path to the future output file. The output file will be the 
+	input BPF file with an appended TRN tier, unless specified 
+	differently (see section EXPERT PARAMETERS).
+
+--language		e.g. deu-DE, eng-US ...
+
+	Language of the input audio and BPF files. --language is a 
+	meta parameter responsible for setting a number of other 
+	parameters, such as the choice of acoustic model. To find out
+	how to override this meta parameter, see documentation in
+	section BINARY PARAMETERS.
+
+#####################################################################
+########################### BASIC PARAMETERS ########################
+#####################################################################
+
+--verbose		0|1|2|3
+
+	This parameter controls verbosity.
+
+	0: no output to stdout
+	1: progress bar to stdout
+	2: recursion tree with little information
+	3: recursion tree with more information
+
+
+--minchunkduration	INTEGER
+	
+	Minimum duration of any chunk in the output in seconds. 
+	Typical values lie in the range 5-20. Note that while the 
+	Chunker can guarantee a lower bound on chunk duration, there 
+	is no upper bound, especially when the input is noisy or 
+	when parameters are set too strictly.
+
+--minanchorlength	INTEGER
+
+	Minimum length, in words, that 'anchors' in the alignment 
+	must have in order to become candidate chunk boundaries. 
+	High values (e.g. 5) mean that the chunker is conservative 
+	in its choices, but also make it harder to find boundaries. 
+	Low values (e.g. 2) make it easier to find boundaries, but 
+	may lead to errors.
+
+	Note: If the option --chunkertype is set to p or tp (see 
+	section EXPERT PARAMETERS), anchor length is expressed in 
+	phonemes instead of words. As a rule of thumb, sensible 
+	minimum anchor lengths for the p chunker range from 5 to 8, 
+	while sensible minimum anchor lengths for the tp chunker 
+	range from 8 to 15.
+
+--silenceonly		INTEGER
+
+	If this parameter is set to a value greater than 0, the 
+	chunker is constrained to place chunk boundaries in regions
+	where it detects a silent interval of a duration greater
+	than that value (in ms). This has the potential of reducing 
+	the number of chunking errors, as boundaries placed inside 
+	pauses have more 'leeway' both to the left and to the right, 
+	and are therefore less likely to cut beginnings or ends of 
+	words. However, it also reduces the number of potential 
+	chunk boundaries, especially when the audio file contains few
+	pauses to begin with. As a rule of thumb, this parameter
+	should be set to 0 on spontaneous speech and in the presence
+	of background noise. On read speech, values between 50 and
+	300 ms have been found to work well.
+
+--boost			true|false
+
+	Start chunker with a boost phase. This will usually speed up
+	the process significantly. In cases where the signal is noisy
+	or the transcription is faulty (especially when there are
+	stretches of non-transcribed material in the audio file),
+	setting this option to true may lead to an increase in chunk
+	errors.
+
+	For guidance on setting special boost parameters, see section
+	EXPERT PARAMETERS.
+
+--force			true|false|rescue
+
+	If this option is set to true, the chunker runs its
+	alternative 'forced chunking' algorithm. This algorithm
+	runs a factorautomaton language model on a short segment 
+	in the middle of the signal to find a single boundary. 
+	This process is then repeated recursively, until chunks are 
+	short enough. As factor automaton language models are more
+	restrictive than bigram language models, this algorithm (as
+	opposed to the standard one) guarantees a result with short
+	chunks. However, its is also more risk-prone than normal 
+	chunking, especially on recordings with faulty
+	transcriptions.
+
+	As a compromise, the force option can be set to 'rescue'.
+	In this case, the chunker runs its normal algorithm first.
+	Only when it ends up with chunks that are longer than the
+	BPF length limit set by the --warnchunkduration option
+	(which is normally set to MAUS's BPFTHRESHOLD), it 
+	switches to forced chunking mode.
+
+#####################################################################
+######################### EXPERT PARAMETERS #########################
+#####################################################################
+
+--insymbols		ipa|sampa
+
+	If set to IPA, the chunker will accept IPA symbols instead
+	of SAMPA (see MAUS's PARAM.SAMPA/KANINVENTAR.inv file for
+	a mapping).
+
+--maus			true|false
+
+	If you set this option to true, the recognition module will 
+	model words as MAUS graphs as opposed to canonical chains of 
+	phonemes. This will slow down the recognition engine. Tests 
+	have so far failed to demonstrate an advantage of the MAUS 
+	chunking mode, as opposed to the canonical mode. Should only 
+	be used when running a T type chunker. For a P type chunker,
+	the MAUS mode should have no effect whatsoever. For a TP type
+	chunker, the alignment quality is likely to deteriorate when
+	canonical and MAUS-type strings are aligned.
+
+--aligner		matrix|hirschberg|fast
+
+	Choice of alignment algorithm for the symbolic alignment 
+	phase.
+
+	matrix:		Wagner-Fisher matrix aligner. This aligner
+			has high memory use, so do not use on 
+			alignment tasks beyond ~ 20 minutes. The 
+			Hirschberg algorithm is generally preferable.
+			Quadratic runtime complexity.
+	hirschberg: 	Hirschberg aligner. Similar quality to the 
+			matrix aligner, but with low memory use.
+			Quadratic runtime complexity.
+	fast:		Approximate aligner. This aligner proceeds in 
+			'windows' of a fixed size, using the Wagner-
+			Fisher matrix aligner on each window. 
+			Therefore, runtime complexity is linear. 
+			However, the global alignment result might be
+			suboptimal. This can lead to errors in the 
+			presence of background noise or faulty 
+			transcriptions, especially when the window 
+			size is small.
+
+--windowsize		INTEGER		
+
+	Window size, if the fast aligner is used. Irrelevant for the 
+	other aligners.
+
+--chunkertype		t|tp|p	
+
+	t: 	purely word-based chunker
+	tp: 	chunker with word-based recognition and phoneme-based 
+		alignment
+	p: 	purely phoneme-based chunker
+
+
+--languagemodel		zerogram|bigram	
+
+	Language model for the recognition phase
+
+	zerogram: unweighted word / phoneme loop
+	bigram: interpolated unigram and bigram word / phoneme model
+
+--languagemodelweight	FLOAT
+
+	Weight of language model for recognition
+
+--bigramweight		FLOAT IN RANGE 0.0-1.0
+	
+	Interpolation weight of the bigram model, relative to the 
+	unigram model, when --languagemodel is set to bigram.
+	Irrelevant for the zerogram language model.
+
+--maxchunkduration	INTEGER
+
+	If this paramater is set to 0, all chunks are printed to the 
+	result TRN tier, regardless of their duration. In most cases, 
+	this is the behaviour that makes most sense. If set to a 
+	value greater than 0, all chunks that are longer than that 
+	value (in seconds) are not written to the TRN tier, meaning 
+	that MAUS will ignore them. This will obviously result in an 
+	incomplete segmentation of the material, so it should only be 
+	done in scenarios where this is acceptable.
+
+--maxanchorcost		INTEGER
+
+	Maximum edit cost of potential anchors for candidate chunk 
+	boundaries.
+
+--minanchorsingletons	INTEGER
+
+	Minimum number of singleton words that potential anchors must 
+	contain.
+
+--outtype		trn|bpf+trn
+
+	Determines the format of the output. If set to trn, only the 
+	resulting TRN tier is outputted. If set to bpf+trn,
+	the trn tier is appended to the input BPF.
+
+--maxnumthreads		INTEGER	
+
+	Maximum number of threads that the Chunker may use. Adding 
+	more threads will decrease runtime. However, as a rule
+	of thumb, the addition of thread number 2 or 3 will have a 
+	larger effect than the addition of thread number 23.
+
+## A further note on boost parameters
+
+	If you set the --boost option to true (see BASIC PARAMETERS),
+	a range of alternative parameters called boost 
+	parameters. They are:
+	
+--boost_chunkertype
+--boost_languagemodel
+--boost_languagemodelweight	
+--boost_minchunkduration
+--boost_minanchorlength
+--boost_maxanchorcost		
+--boost_minanchorsingletons	
+--boost_silenceonly		
+--boost_aligner	
+--boost_windowsize		
+
+	Boost parameters that are not explicitly set and do not have 
+	an explicit default will default to the corresponding 
+	non-boost parameters (see above). Like the defaults for 
+	non-boost parameters, defaults for boost parameters are set 
+	in the configuration files but can be overridden.
+	
+	Typically, boost parameters should be set in such a way to 
+	return a faster, less fine-grained chunking result, that can 
+	then be improved on by the non-boost phase. A minimal example 
+	would be:
+		
+	--chunkertype t --boost_chunkertype p \
+		--boost_minchunkduration 60 --minchunkduration 10
+
+	In this case, the Chunker will run in the fast P mode until
+		A) the chunk duration of 60 seconds has been reached
+		B) or no more chunk boundaries can be discovered
+	Here, the slower but more accurate T mode takes over, until
+		A) the chunk duration of 10 seconds has been reached
+		B) or no more chunk boundaries can be discovered
+
+	If --boost is set to false, boost parameters are ignored.
+
+</help>
+
+#####################################################################
+# DO NOT DELETE THIS </help> TAG ####################################
+#####################################################################
+
+
+
+#####################################################################
+########################## BINARY PARAMETERS ########################
+#####################################################################
+
+The following parameters can only be set when running the binary
+(chunker.binary) directly. When running the wrapper script (chunker),
+they are overridden according to the value of the --language
+parameter. Note: The binary does not accept the --language meta
+parameter.
+
+--config		<PATH TO CONFIG FILE>
+
+	Path to a file containing default values for the parameters
+	described in this documentation.
+
+--exceptionfile		<PATH TO EXCEPTION FILE>
+
+	Path to a list of symbols to ignore during parsing.
+
+--wordvar		<PATH TO WORDVAR EXECUTABLE>
+
+	Path to the wordvar executable used by MAUS. Relevant only
+	when setting --maus to true.
+
+--mmffile		<PATH TO ACOUSTIC MODELS>
+
+	Path to a HTK master model file containing the acoustic
+	models for speech recognition.
+
+--ruleset		<PATH TO WORDVAR RULESET>
+	
+	Path to the language-specific ruleset to be used when 
+	--maus is set to true.
+
+--graphinventar		<PATH TO GRAPHINVENTAR>
+
+	Path to a list containing all possible units of the 
+	language model.	
+
+--dict			<PATH TO DICTIONARY>
+
+	Path to a HTK dictionary.
+
+--hmminventar		<PATH TO HMM INVENTAR>
+
+	Path to a list of all models in the acoustic model file
+	(--mmffile).
+	
+--workdir		<PATH TO WORKING DIRECTORY>
+
+	Path that the chunker may write its temporary files to.
+	If the wrapper function is used, this will be a temporary
+	directory created by the wrapper script.
+
+--clear			true|false
+
+	Determines whether the chunker clears up after itself by
+	deleting its temporary files. If the wrapper function is 
+	used, the clearing up will happen in any case. Set to 
+	false to examine temporary files (e.g. for debugging
+	purposes).
+  
+#####################################################################
+####################### DEVELOPMENT PARAMETERS ######################
+#####################################################################
+
+--htkdurationfactor
+--hvitebeamwidth
+--recursion
+--maxrecursiondepth
+--splitduration	
+--logfile
+
+#####################################################################
+############################ REFERENCES #############################
+#####################################################################
+
+[1] 	Schiel, F. (1999). Automatic Phonetic Transcription of Non-
+	Prompted Speech, Proc. of the ICPhS 1999. San Francisco, 
+	August 1999. pp. 607-610.
+
+[2]	Reichel, U.D. (2012). PermA and Balloon: Tools for string 
+	alignment and text processing, Proc. Interspeech. Portland, 
+	Oregon, paper no. 346.
+
+[3]	Poerner, N., Schiel, F. (2016). An automatic chunk 
+	segmentation tool for long transcribed speech recordings,
+	Proc. Phonetik und Phonologie. Munich. pp. 145-147.

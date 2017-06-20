@@ -1,0 +1,22 @@
+#####################################################################
+#####################################################################
+################## CHUNKER INSTALLATION README ######################
+#####################################################################
+#####################################################################
+
+# build from source if necessary
+
+cd SRC
+make
+cd ..
+
+# this will update the C++ binary ./MAUSROOT/Chunker/chunker.binary
+
+# update ./MAUSROOT/Chunker/chunker by incrementing self.VERSION
+# update ./MAUSROOT/Chunker/HISTORY
+# update ./MAUSROOT/Chunker/README if necessary
+
+./MAUSROOT/Chunker/chunker.bench # check benchmark
+./MAUSROOT/copy_chunker # copy into Florian's MAUS package
+
+# notify Florian that new MAUS package release is needed

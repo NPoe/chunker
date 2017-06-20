@@ -1,0 +1,106 @@
+#####################################################################
+#####################################################################
+###################### CHUNKER MAIN README ##########################
+#####################################################################
+#####################################################################
+
+
+#####################################################################
+##################### Directory structure ###########################
+#####################################################################
+
+./README.installation
+	-- Information on:
+		-- building package from source
+		-- testing package
+		-- steps to take for installation
+
+#####################################################################
+
+./SRC
+	-- C++ source files
+
+./SRC/Makefile
+	-- usage: make
+
+./SRC/Doxyfile
+	-- creates automatic documentation; usage: doxygen
+
+./SRC/*hpp		
+	-- C++ header files
+
+./SRC/*cpp
+	-- C++ source files
+
+./SRC/*o
+	-- C++ object files (remove with make clean)
+
+./SRC/latex/
+	-- automatically generated docs as latex
+
+./SRC/html/
+	-- automatically generated docs as html
+
+#####################################################################
+
+./MAUSROOT/
+	-- simulates the MAUS package environment
+
+./MAUSROOT/PARAM'
+	-- MAUS parameter dirs for local testing
+
+./MAUSROOT/word_var-2.0
+	-- MAUS word_var executable for local testing
+
+./MAUSROOT/copy_chunker.py
+	-- Copies local package into MAUS
+		-- ./MAUSROOT/Chunker -> ~schiel/MAUS/TOOL/Chunker
+
+#####################################################################
+
+./MAUSROOT/Chunker
+	-- Chunker package
+
+./MAUSROOT/Chunker/README
+	-- Main documentation for:
+		-- General information
+		-- Usage
+		-- Parameters
+	-- Attention: this file is read when calling chunker --help!
+
+./MAUSROOT/Chunker/HISTORY
+	-- Documentation of version updates
+
+./MAUSROOT/Chunker/chunker.binary
+	-- generic C++ binary created by Makefile
+	-- for expert use only
+
+./MAUSROOT/Chunker/chunker
+	-- python wrapper responsible for:
+		-- translate language arg into parameter file args
+		-- displaying documentation
+		-- displaying version information
+		-- translating IPA to SAMPA
+		-- calling the binary
+
+./MAUSROOT/Chunker/chunker.bench
+	-- script that calls benchmarks
+
+./MAUSROOT/Chunker/Bench/
+	-- benchmark data
+
+./MAUSROOT/Chunker/Bench/Audio
+	-- benchmark audio files with naming convention <lng>.*.wav
+		-- <lng> = target language
+
+./MAUSROOT/Chunker/Bench/BPF
+	-- benchmark BPF files with naming convention <lng>.*.par
+	-- must contain a ground truth WOR (word) segmentation
+
+./MAUSROOT/Chunker/Config/EXCEPTIONS
+	-- symbols to ignore during KAN tier parsing (e.g. '#')
+
+./MAUSROOT/Chunker/Config/MASTER.config
+	-- global default parameters
+	-- to set language-specific default parameters create:
+		-- ./MAUSROOT/Chunker/Config/<lng>.config

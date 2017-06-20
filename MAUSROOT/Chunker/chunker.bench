@@ -1,0 +1,232 @@
+#! /usr/bin/python2.7
+
+
+'''
+    USAGE: 
+    
+    ./chunker.bench                 # run only the deu-DE.short test case
+    ./chunker.bench all             # run all known test cases
+    ./chunker.bench <file prefix>   # run the test case with file prefixed <file prefix> (e.g. ./chunker.bench deu-DE)
+'''
+
+import sys
+import os
+import re
+import tempfile
+import numpy
+import wave
+import subprocess
+
+THISDIR = os.path.abspath(os.path.dirname(__file__))
+BENCHDIR = os.path.join(THISDIR, "Bench")
+AUDIODIR = os.path.join(BENCHDIR, "Audio")
+BPFDIR = os.path.join(BENCHDIR, "BPF")
+CHUNKEREXE = os.path.join(THISDIR, "chunker")
+
+class Test:
+    def __init__(self, case, params):
+        self._case = case
+        self._language = self._case.split(".")[0]
+        self._params = params
+        self._errors = 0
+        self._dbw95 = None
+        self._err95 = None
+        self._REFKEY = "MWO"
+        self._bpffile = os.path.join(BPFDIR, self._case + ".par")
+        self._audiofile = os.path.join(AUDIODIR, self._case + ".wav")
+        self._outfile = os.path.join(tempfile.gettempdir(), "chunker_bench_output.par")
+        
+        audiohandle = wave.open(self._audiofile)
+        self._samplerate = audiohandle.getframerate()
+        audiohandle.close()
+
+    def run(self):
+        for f in (self._bpffile, self._audiofile):
+            if not os.path.exists(f):
+                print f, "does not exist. Cannot run benchmark.", "<-" * 30
+                return 1
+
+   
+        paramstring = " " + " ".join([key + " " + self._params[key] for key in self._params]) + " "
+    
+        proc = subprocess.Popen(CHUNKEREXE + paramstring + " --audio " + self._audiofile + \
+                " --language " + self._language + " --bpf " + self._bpffile + " --verbose 1 --outfile " + self._outfile,
+                shell = True)
+
+        exitvalue = proc.wait()
+
+        if exitvalue != 0:
+            print "Process did not exit successfully.", "<-" * 30
+            return 1
+
+        if not os.path.exists(self._outfile):
+            print "Output file", self._outfile, "not found.", "<-" * 30
+            return 1
+
+        print "Process exited successfully. Checking output file."
+        self.check_output()
+    
+        os.remove(self._outfile)
+        return self._errors
+
+    def check_output(self):
+
+        self.evaluate()
+
+        if self._dbw95 is None:
+            print "No TRN tier in", self._outfile, "<-" * 30
+            self._errors += 1
+
+        else:
+            print "\t95 % of words contained in chunks of duration below", self._dbw95, "seconds...",
+            if self._dbw95 > 300: 
+                print "Not okay!", "<-" * 30
+                self._errors += 1
+            else: print "Okay!"
+    
+        print "\t95 % of chunk errors below", self._err95, "ms...",
+        if self._err95 > 500: 
+            print "Not okay!", "<-" * 30
+            self._errors += 1
+        else: print "Okay!"
+
+    def evaluate(self):
+        trndict = {}
+        mwodict = {}
+
+        dbw = []
+        errors = []
+
+        with open(self._outfile) as handle:
+            for line in handle:
+                splitline = line.strip().split()
+                if line.startswith("SAM:"):
+                    self._samplerate = float(splitline[1])
+
+                if line.startswith("TRN:"):
+                    trndict[int(splitline[3].split(",")[0])] = int(splitline[1])
+                    dbw.extend([int(splitline[2]) / self._samplerate] * len(splitline[3].split(",")))
+
+                if line.startswith(self._REFKEY):
+                    mwodict[int(splitline[3])] = (int(splitline[1]), int(splitline[1]) + int(splitline[2]))
+    
+        for idx in trndict:
+            right = None
+            left = None
+
+            if idx == 0: continue
+            for j in range(3):
+                if idx + j in mwodict and right is None:
+                    right = mwodict[idx + j][0]
+                if idx - j - 1 in mwodict and left is None:
+                    left = mwodict[idx - j - 1][1]
+
+            if trndict[idx] <= right and trndict[idx] >= left: errors.append(0)
+
+            else: errors.append(min([abs(trndict[idx] - left), abs(trndict[idx] - right)]) / self._samplerate * 1000)
+
+   
+        if(len(dbw)):
+            self._dbw95 = int(round(numpy.percentile(dbw, 95), 0))
+    
+        if(len(errors)):
+            self._err95 = int(round(numpy.percentile(errors, 95), 0))
+
+def runBench(case):
+    
+    errors = 0
+
+    print "-" * 40, "\n", "-" * 40
+    print "Test case:", case
+    print "-" * 40
+
+    print "With default parameters"
+    test = Test(case, {})
+    errors += test.run()
+    
+    print "With --aligner fast"
+    test = Test(case, {"--aligner": "fast"})
+    errors += test.run()
+    
+    print "With --force true"
+    test = Test(case, {"--force": "true", "--minchunkduration": "30"})
+    errors += test.run()
+    
+    return errors
+
+
+def testVersion():
+    ## Version test
+    
+    error = 0
+    print "-" * 40
+    print "-" * 40
+
+    proc = subprocess.Popen(CHUNKEREXE + " --version", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    proc.wait()
+    version = proc.communicate()[0].strip()
+    
+    if not re.match("\d+\.\d+", version):
+        print "Strange version number:", version, "<-" * 30
+        error += 1
+    
+    else:
+        print "Version:", version,
+        print "Okay!"
+
+    return error
+
+def testErrorHandling():
+    
+    error = 0
+    
+    print "-" * 40
+    print "-" * 40
+    
+    outfile = os.path.join(tempfile.gettempdir(), "chunker_bench_output.par")
+    
+
+    CMDS = ("", "--language fra-FR --outfile " + outfile, "--language something --outfile " + outfile)
+
+    for cmd in CMDS:
+        print "Error test:", cmd,
+        proc = subprocess.Popen(CHUNKEREXE + " --language fra-FR --outfile " + outfile, shell = True, 
+                stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        errorcode = proc.wait()
+        [stdout, stderr] = proc.communicate()
+
+
+        if errorcode == 0:
+            print "Error code  0", "<-" * 30
+            error += 1
+        
+        if not all([line.startswith("ERROR:") or line.startswith("WARNING:") for line in stderr.strip().split("\n")]):
+            print "Incorrectly formatted stderr:", stderr.strip(), "<-" * 30
+            error += 1
+    
+        else:
+            print "Okay!"
+
+    return error
+
+if __name__ == "__main__":
+
+    errors = 0
+
+    errors += testVersion()
+    errors += testErrorHandling()
+
+    if len(sys.argv) == 1:
+        errors += runBench("deu-DE.short")
+
+    elif sys.argv[1] == "all":
+        cases = [re.sub(".wav", "", x) for x in os.listdir(AUDIODIR)]
+        for case in cases:
+            errors += runBench(case)
+
+    else:
+        errors += runBench(sys.argv[1])
+
+
+    sys.exit(errors)
+

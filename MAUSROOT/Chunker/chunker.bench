@@ -31,7 +31,7 @@ class Test:
         self._errors = 0
         self._dbw95 = None
         self._err95 = None
-        self._REFKEY = "MWO"
+        self._REFKEY = "WOR"
         self._bpffile = os.path.join(BPFDIR, self._case + ".par")
         self._audiofile = os.path.join(AUDIODIR, self._case + ".wav")
         self._outfile = os.path.join(tempfile.gettempdir(), "chunker_bench_output.par")

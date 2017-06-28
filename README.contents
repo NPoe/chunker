@@ -1,12 +1,5 @@
 #####################################################################
-#####################################################################
-###################### CHUNKER MAIN README ##########################
-#####################################################################
-#####################################################################
-
-
-#####################################################################
-##################### Directory structure ###########################
+################## Chunker package structure ########################
 #####################################################################
 
 ./README.installation
@@ -18,7 +11,7 @@
 #####################################################################
 
 ./SRC
-	-- C++ source files
+	-- C++ files
 
 ./SRC/Makefile
 	-- usage: make
@@ -47,13 +40,13 @@
 	-- simulates the MAUS package environment
 
 ./MAUSROOT/PARAM'
-	-- MAUS parameter dirs for local testing
+	-- Symlinks to MAUS parameter dirs for local testing
 
 ./MAUSROOT/word_var-2.0
-	-- MAUS word_var executable for local testing
+	-- Symlink to MAUS word_var executable for local testing
 
 ./MAUSROOT/copy_chunker.py
-	-- Copies local package into MAUS
+	-- Copies local package into MAUS package
 		-- ./MAUSROOT/Chunker -> ~schiel/MAUS/TOOL/Chunker
 
 #####################################################################
@@ -76,12 +69,13 @@
 	-- for expert use only
 
 ./MAUSROOT/Chunker/chunker
-	-- python wrapper responsible for:
-		-- translate language arg into parameter file args
+	-- this is the script that is execuded by the command 'chunker'
+	-- the wrapper is responsible for:
 		-- displaying documentation
 		-- displaying version information
+		-- translate language arg into parameter file args
 		-- translating IPA to SAMPA
-		-- calling the binary
+		-- calling the actual binary ('chunker.binary')
 
 ./MAUSROOT/Chunker/chunker.bench
 	-- script that calls benchmarks

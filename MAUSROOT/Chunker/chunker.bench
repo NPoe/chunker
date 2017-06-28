@@ -49,8 +49,8 @@ class Test:
    
         paramstring = " " + " ".join([key + " " + self._params[key] for key in self._params]) + " "
     
-        proc = subprocess.Popen(CHUNKEREXE + paramstring + " --audio " + self._audiofile + \
-                " --language " + self._language + " --bpf " + self._bpffile + " --verbose 1 --outfile " + self._outfile,
+        proc = subprocess.Popen(CHUNKEREXE + paramstring + " -audio " + self._audiofile + \
+                " -language " + self._language + " --bpf " + self._bpffile + " --verbose 1 --outfile " + self._outfile,
                 shell = True)
 
         exitvalue = proc.wait()
@@ -145,11 +145,11 @@ def runBench(case):
     errors += test.run()
     
     print "With --aligner fast"
-    test = Test(case, {"--aligner": "fast"})
+    test = Test(case, {"-aligner": "fast"})
     errors += test.run()
     
     print "With --force true"
-    test = Test(case, {"--force": "true", "--minchunkduration": "30"})
+    test = Test(case, {"--force": "true", "-minchunkduration": "30"})
     errors += test.run()
     
     return errors
@@ -162,7 +162,7 @@ def testVersion():
     print "-" * 40
     print "-" * 40
 
-    proc = subprocess.Popen(CHUNKEREXE + " --version", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    proc = subprocess.Popen(CHUNKEREXE + " -version", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     proc.wait()
     version = proc.communicate()[0].strip()
     

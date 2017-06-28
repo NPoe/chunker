@@ -57,3 +57,8 @@
 
 0.11	- Fix for windows users: Chunker can now handle input
 	with carriage returns
+
+0.12	- Command line arguments can now be passed as --arg value
+	or -arg value. Also, --version/-version and --help/-help
+	are now equivalent. Changed benchmark so that this is
+	tested.

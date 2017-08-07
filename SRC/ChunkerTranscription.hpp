@@ -34,6 +34,7 @@ private:
 	void extractORTTier();
 	void parseORTLine(const std::string&, const std::string&);
 
+	std::string escapePhoneme(const std::string&);
 	/** \brief Extract KAN (canonical) tier from BPF */
 	void extractKANTier();
 	void parseKANLine(const std::string&, const std::string&);

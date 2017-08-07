@@ -152,6 +152,10 @@ def runBench(case):
     test = Test(case, {"--force": "true", "-minchunkduration": "30"})
     errors += test.run()
     
+    print "With --maus true"
+    test = Test(case, {"--maus": "true"})
+    errors += test.run()
+    
     return errors
 
 

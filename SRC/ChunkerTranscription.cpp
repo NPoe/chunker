@@ -164,6 +164,27 @@ void Transcription::segmentWithBlanks
 	}
 }
 
+std::string Transcription::escapePhoneme
+(
+	const std::string & phoneme
+)
+{CHUNKER_FLOG
+	std::string escaped(phoneme);
+
+	if(ChunkerUtil::isIntString(phoneme.substr(0,1)))
+	{
+		escaped.insert(escaped.begin(), 'P');
+	}
+
+	if(phoneme.back() == '\\')
+	{
+		escaped.pop_back();
+		escaped.push_back('-');
+	}
+
+	return escaped;
+}
+
 void Transcription::segmentWithoutBlanks
 (
  	const std::string & token,
@@ -177,7 +198,7 @@ void Transcription::segmentWithoutBlanks
 		std::string remains(iter, token.cend());
 	
 		CHUNKER_LOG4 << "Remains: " << remains CHUNKER_ENDLOG
-	
+
 		if(remains.find('<') == 0 and remains.find('>') < remains.size())
 		{
 			std::string tag(remains, 0, remains.find('>') + 1);
@@ -202,10 +223,7 @@ void Transcription::segmentWithoutBlanks
 				iter += phoneme.size();
 				CHUNKER_LOG4 << "Advancing by: " << phoneme.size() CHUNKER_ENDLOG
 
-				if(ChunkerUtil::isIntString(phoneme.substr(0,1)))
-				{
-					phoneme = "P"+phoneme;
-				}
+				phoneme = escapePhoneme(phoneme);
 				
 				auto finder = _phonemes.emplace(phoneme, TranscriptionPhoneme(phoneme)).first;
 				segmentation->push_back(&(finder->second));
@@ -247,12 +265,13 @@ TranscriptionPhoneIterator Transcription::getPhoneIterator() const
 	return TranscriptionPhoneIterator(_transcript); 
 }
 
+
 Transcription::Transcription()
 {CHUNKER_FLOG
 	std::string buffer;
 
-	std::ifstream labelSetStream(ChunkerManager::getOptionString(ChunkerManager::GRAPHINVENTAR));
-	ChunkerUtil::checkInStream(labelSetStream, ChunkerManager::getOptionString(ChunkerManager::GRAPHINVENTAR));
+	std::ifstream labelSetStream(ChunkerManager::getOptionString(ChunkerManager::KANINVENTAR));
+	ChunkerUtil::checkInStream(labelSetStream, ChunkerManager::getOptionString(ChunkerManager::KANINVENTAR));
 
 	while(std::getline(labelSetStream, buffer))
 	{
@@ -260,17 +279,13 @@ Transcription::Transcription()
 		if(tokens.size() > 1)
 		{
 			CHUNKER_ERR << "Cannot parse line " << buffer << " in file " <<
-				ChunkerManager::getOptionString(ChunkerManager::GRAPHINVENTAR) CHUNKER_ENDERR1
+				ChunkerManager::getOptionString(ChunkerManager::KANINVENTAR) CHUNKER_ENDERR1
 		}
 
 		if(tokens.size() == 1)
 		{
 			std::string label(tokens.at(0));
 
-			if(label.at(0) == 'P' && ChunkerUtil::isIntString(label.substr(1,1)))
-			{
-				label = tokens.at(0).substr(1);
-			}
 			if(label != ChunkerUtil::PAUSESTRING)
 			{
 				_labelSet.emplace(label);

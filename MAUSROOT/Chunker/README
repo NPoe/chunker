@@ -401,6 +401,11 @@ parameter.
 	Path to a list containing all possible units of the 
 	language model.	
 
+--kaninventar		<PATH TO KANINVENTAR>
+
+	Path to a list containing all possible phonemes of the
+	BPF.
+
 --dict			<PATH TO DICTIONARY>
 
 	Path to a HTK dictionary.

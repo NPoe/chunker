@@ -62,3 +62,7 @@
 	or -arg value. Also, --version/-version and --help/-help
 	are now equivalent. Changed benchmark so that this is
 	tested.
+
+0.13	- Fix: Chunker now reads KANINVENTAR instead of GRAPH-
+	INVENTAR when parsing BPF. This bug led to errors in a
+	few languages such as Hungarian.

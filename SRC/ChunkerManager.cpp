@@ -47,6 +47,7 @@ const unsigned short ChunkerManager::GRAPHINVENTAR = 81;
 const unsigned short ChunkerManager::RULESET = 82;
 const unsigned short ChunkerManager::MAUSDICT = 83;
 const unsigned short ChunkerManager::MAUSHMMINVENTAR = 84;
+const unsigned short ChunkerManager::KANINVENTAR = 85;
 
 const unsigned short ChunkerManager::BOOLTYPE = 100;
 const unsigned short ChunkerManager::INTEGERTYPE = 101;
@@ -98,6 +99,7 @@ const std::map<std::string, unsigned short> ChunkerManager::KEYTOINDEX =
 	{"wordvar", ChunkerManager::WORDVAREXE},
 	{"ruleset", ChunkerManager::RULESET},
 	{"graphinventar", ChunkerManager::GRAPHINVENTAR},
+	{"kaninventar", ChunkerManager::KANINVENTAR},
 	{"dict", ChunkerManager::MAUSDICT},
 	{"hmminventar", ChunkerManager::MAUSHMMINVENTAR}
 };
@@ -142,6 +144,7 @@ const std::map<unsigned short, unsigned short> ChunkerManager::INDEXTOTYPE =
 	{ChunkerManager::RULESET, ChunkerManager::FILEREADTYPE},
 	{ChunkerManager::WORDVAREXE, ChunkerManager::FILEREADTYPE},
 	{ChunkerManager::GRAPHINVENTAR, ChunkerManager::FILEREADTYPE},
+	{ChunkerManager::KANINVENTAR, ChunkerManager::FILEREADTYPE},
 	{ChunkerManager::MAUSDICT, ChunkerManager::FILEREADTYPE},
 	{ChunkerManager::MAUSHMMINVENTAR, ChunkerManager::FILEREADTYPE}
 };

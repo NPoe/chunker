@@ -2,6 +2,7 @@
 #define CHUNKER_MANAGER_HPP
 
 
+
 class ChunkerManager
 {
 public:
@@ -52,6 +53,7 @@ public:
 
 	static const unsigned short WORDVAREXE;
 	static const unsigned short GRAPHINVENTAR;
+	static const unsigned short KANINVENTAR;
 	static const unsigned short RULESET;
 	static const unsigned short MAUSDICT;
 	static const unsigned short MAUSHMMINVENTAR;
@@ -69,7 +71,7 @@ public:
 private:
 
 	static std::mutex _lock;
-	ChunkerManager();
+	
 
 	static std::map<unsigned short, std::array<std::string, 2> > _indexToValue;
 
@@ -81,9 +83,14 @@ private:
 	static const std::map<unsigned short, unsigned short> INDEXTOTYPE;
 
 	static std::map<unsigned short, std::string> _indexToKey;
+	
+	/** \brief Private constructor
+	 *
+	 *  Not to be used, since this is a static class.
+	 */
+	ChunkerManager();
 
 	static void readArgv(int, std::vector<std::string>);
-	
 	static void readConfig(const std::string &);
 
 	static bool deriveStage(std::string *);

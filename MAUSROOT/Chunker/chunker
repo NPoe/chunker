@@ -13,10 +13,11 @@ class ChunkerWrapper:
     
     def __init__(self):
         
-        self.VERSION = "0.12"
+        self.VERSION = "0.13"
         self.PARAMPREFIX = "PARAM."
         
         self.MAUSFILES = {"--hmminventar": "HMMINVENTAR", "--graphinventar": "GRAPHINVENTAR", \
+                "--kaninventar": "KANINVENTAR",
                 "--ruleset": "rml-0.95.rul", "--dict": "DICT", "--mmffile": "MMF.mmf"}
         
         self._configkeys = {}

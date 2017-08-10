@@ -54,6 +54,12 @@ public:
 class LMHTK : public LanguageModel
 {
 public:
+	/**
+	 * \brief Constructor
+	 * \param iter Iterator over all units (tokens / phones) in transcription
+	 * \param modeller Responsible for modelling tokens / phones internally
+	 * \param prefix File system prefix for temporary files (same as that of the calling chunker object)
+	 */
 	LMHTK(std::unique_ptr<TranscriptionIterator>, std::unique_ptr<UnitModeller>, const std::string &);
 };
 
@@ -66,6 +72,11 @@ public:
 class LMZerogram : public LanguageModel
 {
 public:
+	/**
+	 * \brief Constructor
+	 * \param iter Iterator over all units (tokens / phones) in transcription
+	 * \param modeller Responsible for modelling tokens / phones internally
+	 */
 	LMZerogram(std::unique_ptr<TranscriptionIterator>, std::unique_ptr<UnitModeller>);
 };
 
@@ -77,6 +88,11 @@ public:
 class LMUnigram : public LanguageModel
 {
 public:
+	/**
+	 * \brief Constructor
+	 * \param iter Iterator over all units (tokens / phones) in transcription
+	 * \param modeller Responsible for modelling tokens / phones internally
+	 */
 	LMUnigram(std::unique_ptr<TranscriptionIterator>, std::unique_ptr<UnitModeller>);
 };
 
@@ -89,6 +105,11 @@ public:
 class LMBigram : public LanguageModel
 {
 public:
+	/**
+	 * \brief Constructor
+	 * \param iter Iterator over all units (tokens / phones) in transcription
+	 * \param modeller Responsible for modelling tokens / phones internally
+	 */
 	LMBigram(std::unique_ptr<TranscriptionIterator>, std::unique_ptr<UnitModeller>);
 };
 
@@ -100,6 +121,11 @@ public:
 class LMPair : public LanguageModel
 {
 public:
+	/**
+	 * \brief Constructor
+	 * \param iter Iterator over all units (tokens / phones) in transcription
+	 * \param modeller Responsible for modelling tokens / phones internally
+	 */
 	LMPair(std::unique_ptr<TranscriptionIterator>, std::unique_ptr<UnitModeller>);
 };
 
@@ -113,6 +139,11 @@ public:
 class LMTriple : public LanguageModel
 {
 public:
+	/**
+	 * \brief Constructor
+	 * \param iter Iterator over all units (tokens / phones) in transcription
+	 * \param modeller Responsible for modelling tokens / phones internally
+	 */
 	LMTriple(std::unique_ptr<TranscriptionIterator>, std::unique_ptr<UnitModeller>);
 };
 
@@ -123,6 +154,11 @@ public:
 class LMFactorAutomaton : public LanguageModel
 {
 public:
+	/**
+	 * \brief Constructor
+	 * \param iter Iterator over all units (tokens / phones) in transcription
+	 * \param modeller Responsible for modelling tokens / phones internally
+	 */
 	LMFactorAutomaton(std::unique_ptr<TranscriptionIterator>, std::unique_ptr<UnitModeller>);
 };
 
@@ -133,6 +169,11 @@ public:
 class LMForcedAlign : public LanguageModel
 {
 public:
+	/**
+	 * \brief Constructor
+	 * \param iter Iterator over all units (tokens / phones) in transcription
+	 * \param modeller Responsible for modelling tokens / phones internally
+	 */
 	LMForcedAlign(std::unique_ptr<TranscriptionIterator>, std::unique_ptr<UnitModeller>);
 };
 

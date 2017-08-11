@@ -44,6 +44,7 @@ class ChunkerWrapper:
         olddict = self._arguments["--dict"]
         newdict = os.path.join(self._workdir, "IPADICT")
         newgraph = os.path.join(self._workdir, "IPAGRAPHINVENTAR")
+        newkan = os.path.join(self._workdir, "IPAKANINVENTAR")
         
         maus_ipa = {}
 
@@ -55,6 +56,7 @@ class ChunkerWrapper:
 
         with open(olddict) as olddicthandle:
             with open(newdict, "w") as newdicthandle:
+                newkanhandle = open(newkan, "w")
                 with open(newgraph, "w") as newgraphhandle:
                     for line in olddicthandle:
                         splitline = line.split()
@@ -77,9 +79,12 @@ class ChunkerWrapper:
 
                                 newdicthandle.write(maus_ipa[fromlabel] + " " + tolabel + "\n")
                                 newgraphhandle.write(maus_ipa[fromlabel] + "\n")
+                                newkanhandle.write(maus_ipa[fromlabel] + "\n")
 
+        newkanhandle.close()
         self._arguments["--dict"] = os.path.join(self._workdir, "IPADICT")
         self._arguments["--graphinventar"] = os.path.join(self._workdir, "IPAGRAPHINVENTAR")
+        self._arguments["--kaninventar"] = os.path.join(self._workdir, "IPAKANINVENTAR")
 
         
 

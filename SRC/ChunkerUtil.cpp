@@ -1,18 +1,18 @@
 #include "ChunkerGlobal.hpp"
 
-const std::string ChunkerUtil::PAUSESTRING = "#"; /**< Name of optional pause acoustic model */
-const std::string ChunkerUtil::TAGSTART = "<"; /**< Name of optional pause acoustic model */
-const std::string ChunkerUtil::TAGEND = ">"; /**< Name of optional pause acoustic model */
-const std::string ChunkerUtil::SPECIALSTRING = "___"; /**< Name of optional pause acoustic model */
-const std::string ChunkerUtil::NULLSTRING = "!NULL"; /**< HTK lattice's name for non-emitting states */
+const std::string ChunkerUtil::PAUSESTRING = "#";
+const std::string ChunkerUtil::TAGSTART = "<";
+const std::string ChunkerUtil::TAGEND = ">";
+const std::string ChunkerUtil::SPECIALSTRING = "___";
+const std::string ChunkerUtil::NULLSTRING = "!NULL";
 const std::string ChunkerUtil::BOOSTSTRING = "boost_";
-const std::set<char> ChunkerUtil::WHITESPACES = {' ', '\t', '\r', '\n'}; /**< White space delimiters */
-const std::string ChunkerUtil::EMPTYSTRING = ""; /**< Empty string */
-const std::string ChunkerUtil::KANKEY = "KAN"; /**< BPF key for canonical pronunciation tier */
-const std::string ChunkerUtil::ORTKEY = "ORT"; /**< BPF key for canonical pronunciation tier */
-const std::string ChunkerUtil::TRNKEY = "TRN"; /**< BPF key for turn segmentation tier */
-const std::string ChunkerUtil::SAMKEY = "SAM"; /**< BPF key for sampling rate entry */
-const std::string ChunkerUtil::LBDKEY = "LBD"; /**< BPF key for sampling rate entry */
+const std::set<char> ChunkerUtil::WHITESPACES = {' ', '\t', '\r', '\n'};
+const std::string ChunkerUtil::EMPTYSTRING = "";
+const std::string ChunkerUtil::KANKEY = "KAN"; 
+const std::string ChunkerUtil::ORTKEY = "ORT";
+const std::string ChunkerUtil::TRNKEY = "TRN";
+const std::string ChunkerUtil::SAMKEY = "SAM";
+const std::string ChunkerUtil::LBDKEY = "LBD";
 const std::string ChunkerUtil::WORDVARSOURCE = "wordvar.mlf";
 const std::string ChunkerUtil::WORDVARTARGET = "wordvar.slf";
 const std::string ChunkerUtil::WORDVARSTEM = "wordvar";
@@ -21,12 +21,8 @@ const std::string ChunkerUtil::HLSTATSBACKOFF = "hlstats_backoff";
 const std::string ChunkerUtil::HLSTATSLATTICE = "hlstats_lattice";
 const std::string ChunkerUtil::HLSTATSWORDLIST = "hlstats_wordlist";
 const std::string ChunkerUtil::WORDVARBOUNDARY = "#";
-const std::set<char> ChunkerUtil::MLFCOMMENTCHARS = {'#', '\"', '.'}; /**< Characters at the beginning of label file lines that we need to ignore */
+const std::set<char> ChunkerUtil::MLFCOMMENTCHARS = {'#', '\"', '.'};
 
-
-/**
- *	Current path / directory separator character
- */
 const std::string ChunkerUtil::SEP =
 #if defined WIN32 || defined _WIN32 || defined __CYGWIN__
 	"\\";

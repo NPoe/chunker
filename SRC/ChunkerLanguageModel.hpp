@@ -2,17 +2,17 @@
 #define CHUNKER_LANGUAGEMODEL_HPP
 
 /**
- * \class Language Model
+ * \class LanguageModel
  *
  * \brief Base class for all language models
  */
 class LanguageModel
 {
 protected:
-	std::deque<std::tuple<unsigned, std::string> > _nodes; /** List of all nodes */
-	std::deque<std::tuple<unsigned, unsigned, std::string> > _links; /** List of all links beteen nodes */
+	std::deque<std::tuple<unsigned, std::string> > _nodes; /**< List of all nodes */
+	std::deque<std::tuple<unsigned, unsigned, std::string> > _links; /**< List of all links beteen nodes */
 
-	std::unique_ptr<UnitModeller> _modeller; /** Modeller being used to model types / phonemes */
+	std::unique_ptr<UnitModeller> _modeller; /**< Modeller being used to model types / phonemes */
 public:
 	/**
 	 * \brief Add new node to language model

@@ -86,7 +86,7 @@ private:
 class UnitModellerMaus : public UnitModeller
 {
 private:
-	std::string _prefix; /** File system prefix, same as for the chunker object that owns this modeller */
+	std::string _prefix; /**< File system prefix, same as for the chunker object that owns this modeller */
 	
 	/**
 	 * \brief linear implementation of inner modelling function

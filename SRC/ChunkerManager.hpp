@@ -70,19 +70,18 @@ public:
 
 private:
 
-	static std::mutex _lock;
+	static std::mutex _lock; /**< Lock that can only be owned by one thread at a time (to prevent race conditions) */
 	
 
-	static std::map<unsigned short, std::array<std::string, 2> > _indexToValue;
+	static std::map<unsigned short, std::array<std::string, 2> > _indexToValue; /**< Maps argument indices to their boost value (0) and normal value (1) */
 
 
-	static int _currentThreads;
+	static int _currentThreads; /**< Number of threads currently running */
 
-	static const std::map<unsigned short, std::string> INDEXTODEFAULT;	
-	static const std::map<std::string, unsigned short> KEYTOINDEX; 
-	static const std::map<unsigned short, unsigned short> INDEXTOTYPE;
+	static const std::map<std::string, unsigned short> KEYTOINDEX; /**< Maps argument strings to their indices */
+	static const std::map<unsigned short, unsigned short> INDEXTOTYPE; /**< Maps argument indices to their type indices (important to check argument validity) */
 
-	static std::map<unsigned short, std::string> _indexToKey;
+	static std::map<unsigned short, std::string> _indexToKey; /**< Reverse-map of KEYTOINDEX */
 	
 	/** \brief Private constructor
 	 *
@@ -90,41 +89,150 @@ private:
 	 */
 	ChunkerManager();
 
-	static void readArgv(int, std::vector<std::string>);
+	/**
+	 * \brief Read argument vector
+	 * \param argv
+	 */
+	static void readArgv(std::vector<std::string>);
+
+	/**
+	 * \brief Read configuation file
+	 * \param configfile Path to configuation file
+	 *
+	 */
 	static void readConfig(const std::string &);
 
+	/**
+	 * \brief Check if string contains boost_ prefix and cut off that prefix
+	 * \param key Pointer to argument string
+	 * \returns boolean that indicates whether there was a boost_ prefix
+	 */
 	static bool deriveStage(std::string *);
-	static void checkOptions();
-	static void fillOptions();
-public:
-	static std::unique_ptr<std::lock_guard<std::mutex> >getLock();
-	static bool isBoosted();
-	static bool isForced();
-	static std::ofstream LOG;
 	
-	static void init(int, char**);
+	/**
+	 * \brief Check whether all options are valid (e.g. valid integers), otherwise throw error
+	 */
+	static void checkOptions();
+
+	/**
+	 * \brief Fill option table
+	 */
+	static void fillOptions();
+	
+	/** \brief initialize manager by parsing arguments and config file
+	 *
+	 * \param argv vectorized and stringified argument vector
+	 */
 	static void init(std::vector<std::string>);
 
+public:
+	static std::ofstream LOG; /**< Output stream to log file */
 	
+	/**
+	 * \brief Get lock before changing a variable shared by different threads
+	 * \returns Pointer to lock
+	 */
+	static std::unique_ptr<std::lock_guard<std::mutex> > getLock();
+	
+	/**
+	 * \brief Check if the boost phase is used (or if there is at least one boost_ parameter)
+	 * \returns boolean indicating whether to start boost phase
+	 */
+	static bool isBoosted();
+
+	/** \brief initialize manager by parsing arguments and config file
+	 *
+	 * \param argc argument count as passed to main
+	 * \param argv argument vector as passed to main
+	 */
+	static void init(int, char**);
+	
+	
+	/** \brief Return option value as string
+	 * \param option Option index
+	 * \note Throws an exception if the boost value and the normal value differ
+	 */
 	static const std::string& getOptionString(unsigned short);
+	
+	/** \brief Return option value as string
+	 * \param option Option index
+	 * \param boost if 0, return boost parameter value; if 1, return normal parameter value
+	 */
 	static const std::string& getOptionString(unsigned short, bool);
 
+	/** \brief Check if an option is equal for all stages
+	 *
+	 * \param option Option index
+	 * \note This function throws an error if an option with an explicit boost parameter is queried without 
+	 * information on whether the boost parameter is meant
+	 */
 	static void checkNonBoostable(unsigned short);
 	
+	/** \brief Return option value as integer
+	 * \param option Option index
+	 * \note Throws an exception if the boost value and the normal value differ
+	 * \note Throws an exception if the parameter is not a valid integer parameter
+	 */
 	static int getOptionInt(unsigned short);
+	
+	/** \brief Return option value as integer
+	 * \param option Option index
+	 * \param boost if 0, return boost parameter value; if 1, return normal parameter value
+	 * \note Throws an exception if the parameter is not a valid integer parameter
+	 */
 	static int getOptionInt(unsigned short, bool);
 	
+	/** \brief Return option value as long integer
+	 * \param option Option index
+	 * \note Throws an exception if the boost value and the normal value differ
+	 * \note Throws an exception if the parameter is not a valid long integer parameter
+	 */
 	static long getOptionLong(unsigned short);
+	
+	/** \brief Return option value as long integer
+	 * \param option Option index
+	 * \param boost if 0, return boost parameter value; if 1, return normal parameter value
+	 * \note Throws an exception if the parameter is not a valid long integer parameter
+	 */
 	static long getOptionLong(unsigned short, bool);
 	
+	/** \brief Return option value as float
+	 * \param option Option index
+	 * \note Throws an exception if the boost value and the normal value differ
+	 * \note Throws an exception if the parameter is not a valid float parameter
+	 */
 	static float getOptionFloat(unsigned short);
+	
+	/** \brief Return option value as long integer
+	 * \param option Option index
+	 * \param boost if 0, return boost parameter value; if 1, return normal parameter value
+	 * \note Throws an exception if the parameter is not a valid float parameter
+	 */
 	static float getOptionFloat(unsigned short, bool);
 	
+	/** \brief Return option value as boolean
+	 * \param option Option index
+	 * \note Throws an exception if the boost value and the normal value differ
+	 * \note Throws an exception if the parameter is not a valid boolean parameter
+	 */
 	static bool getOptionBool(unsigned short);	
+	
+	/** \brief Return option value as boolean
+	 * \param option Option index
+	 * \param boost if 0, return boost parameter value; if 1, return normal parameter value
+	 * \note Throws an exception if the parameter is not a valid boolean parameter
+	 */
 	static bool getOptionBool(unsigned short, bool);	
 
+	/**
+	 * \brief Check whether a new thread can be started
+	 * \returns true if a new thread can be started, false otherwise
+	 */
 	static bool getThread();
 	
+	/**
+	 * \brief Inform manager that a thread has finished
+	 */
 	static void returnThread();
 };
 

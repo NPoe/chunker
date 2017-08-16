@@ -349,7 +349,7 @@ bool ChunkerManager::isBoosted()
 
 void ChunkerManager::checkNonBoostable(unsigned short option)
 {CHUNKER_FLOG
-	if (getOptionString(option, 1) != getOptionString(option, 2) || getOptionString(option, 1) != getOptionString(option, 0))
+	if (getOptionString(option, 1) != getOptionString(option, 0))
 	{
 		CHUNKER_ERR << "Parameter cannot be requested without stage information " << option CHUNKER_ENDERR1
 	}	
@@ -523,7 +523,7 @@ void ChunkerManager::init(std::vector<std::string> argv)
 		}
 	}
 
-	readArgv(argc, argv);
+	readArgv(argv);
 
 
 	if(_indexToValue.at(CONFIG).at(1).empty())
@@ -570,13 +570,13 @@ void ChunkerManager::returnThread()
 }
 
 
-void ChunkerManager::readArgv(int argc, std::vector<std::string> argv)
+void ChunkerManager::readArgv(std::vector<std::string> argv)
 {
-	for (int i = 0; i < argc; i++)
+	for (int i = 0; i < argv.size(); i++)
 	{
 		std::string option(argv[i]);
 
-		if(option.substr(0, 2) == "--" && i + 1 < argc)
+		if(option.substr(0, 2) == "--" && i + 1 < argv.size())
 		{
 			option = ChunkerUtil::lowercase(option).substr(2);
 	

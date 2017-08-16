@@ -13,7 +13,7 @@ class LanguageModel;
 class UnitModeller
 {
 protected:
-	LanguageModel * _lm; /** Pointer to the language model that is using this modeller */
+	LanguageModel * _lm; /**< Pointer to the language model that is using this modeller */
 
 	/**
 	 * \brief abstract version of the inner modelling function, implemented by child classes

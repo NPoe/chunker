@@ -81,8 +81,7 @@ bool TurnTier::checkLength() const
 void TurnTier::addItem(long start, long dur, const std::deque<TranscriptionTokenIterator> & tokens)
 {
 	if(ChunkerManager::getOptionInt(ChunkerManager::MAXCHUNKDURATION) == 0 ||
-			dur < ChunkerManager::getOptionLong(ChunkerManager::MAXCHUNKDURATION) *
-			ChunkerManager::getOptionLong(ChunkerManager::HTKDURATIONFACTOR))
+			dur <= ChunkerManager::getOptionLong(ChunkerManager::MAXCHUNKDURATION) * _samplingRate)
 	{
 		_items.push_back(TurnTierItem(start, dur, tokens));
 	}

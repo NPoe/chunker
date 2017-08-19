@@ -13,7 +13,7 @@ class ChunkerWrapper:
     
     def __init__(self):
         
-        self.VERSION = "0.13"
+        self.VERSION = "0.14"
         self.PARAMPREFIX = "PARAM."
         
         self.MAUSFILES = {"--hmminventar": "HMMINVENTAR", "--graphinventar": "GRAPHINVENTAR", \

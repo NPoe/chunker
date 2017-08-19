@@ -66,3 +66,6 @@
 0.13	- Fix: Chunker now reads KANINVENTAR instead of GRAPH-
 	INVENTAR when parsing BPF. This bug led to errors in a
 	few languages such as Hungarian.
+
+0.14	- Fixed a bug that meant that the --maxchunkduration
+	parameter did not work correctly 

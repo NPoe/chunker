@@ -72,3 +72,5 @@
 
 0.15	- If --outtype is bpf+trn, the LHD header tag is added
 	if it is not already present
+	- Bugfix: Mistake with priority-based order of chunk
+	boundaries

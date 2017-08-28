@@ -64,7 +64,7 @@ bool Boundary::orderPriorityAnchorLength::operator() (const Boundary & first, co
 	
 	if(first.getAnchorLength() != second.getAnchorLength())
 	{
-		return first.getAnchorLength() > second.getPauseDuration();
+		return first.getAnchorLength() > second.getAnchorLength();
 	}
 					
 	if(first.getPauseDuration() != second.getPauseDuration())
@@ -89,7 +89,7 @@ bool Boundary::orderPriorityPauseDuration::operator() (const Boundary & first, c
 	
 	if(first.getAnchorLength() != second.getAnchorLength())
 	{
-		return first.getAnchorLength() > second.getPauseDuration();
+		return first.getAnchorLength() > second.getAnchorLength();
 	}				
 
 	return first.getBoundaryTime() < second.getBoundaryTime();

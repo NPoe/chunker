@@ -68,4 +68,7 @@
 	few languages such as Hungarian.
 
 0.14	- Fixed a bug that meant that the --maxchunkduration
-	parameter did not work correctly 
+	parameter did not work correctly
+
+0.15	- If --outtype is bpf+trn, the LHD header tag is added
+	if it is not already present

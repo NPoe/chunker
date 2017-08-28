@@ -718,27 +718,69 @@ void Chunker::writeOutput() const
 
 	if(outtype == "bpf+trn") 
 	{
-		if(!BPFcontainsKey(ChunkerUtil::SAMKEY)) outStream << ChunkerUtil::SAMKEY << ": " << 
-			ChunkerUtil::getSamplingRate(ChunkerManager::getOptionString(ChunkerManager::AUDIOFILE)) << std::endl;
-		if(!BPFcontainsKey(ChunkerUtil::LBDKEY)) outStream << ChunkerUtil::LBDKEY << ":" << std::endl;
-
-		writeOriginalBPF(outStream); 
+		writeOriginalBPFHeader(outStream); 
+		writeOriginalBPFBody(outStream); 
 	}
 
 	outStream << (*turnTier);
 	outStream.close();
 }
 
-void Chunker::writeOriginalBPF(std::ostream & stream) const
+void Chunker::writeOriginalBPFHeader(std::ostream & stream) const
+{CHUNKER_FLOG
+	
+	std::ifstream instream(ChunkerUtil::getBPFFile(_prefix));
+	ChunkerUtil::checkInStream(instream, ChunkerUtil::getBPFFile(_prefix));
+	std::string buffer;
+
+	if(!BPFcontainsKey(ChunkerUtil::LHDKEY))
+	{
+		stream << ChunkerUtil::LHDKEY << ": Partitur 1.3.3" << std::endl;
+	}
+
+	if(BPFcontainsKey(ChunkerUtil::LBDKEY))
+	{
+		while(std::getline(instream, buffer))
+		{
+			if(buffer.substr(0,3) == ChunkerUtil::LBDKEY)
+			{
+				break;
+			}
+
+			stream << buffer;
+			if(buffer.back() != '\n') stream << std::endl;
+		}
+	}
+
+	if(!BPFcontainsKey(ChunkerUtil::SAMKEY))
+	{
+		stream << ChunkerUtil::SAMKEY << ": " << 
+			ChunkerUtil::getSamplingRate(ChunkerManager::getOptionString(ChunkerManager::AUDIOFILE)) << std::endl;
+	}
+	
+	stream << ChunkerUtil::LBDKEY << ":" << std::endl;
+}
+
+
+void Chunker::writeOriginalBPFBody(std::ostream & stream) const
 {CHUNKER_FLOG
 	std::ifstream instream(ChunkerUtil::getBPFFile(_prefix));
 	ChunkerUtil::checkInStream(instream, ChunkerUtil::getBPFFile(_prefix));
 	std::string buffer;
 
+	bool seenLBD = (!BPFcontainsKey(ChunkerUtil::LBDKEY));
 	while(std::getline(instream, buffer))
 	{
-		stream << buffer;
-		if(buffer.back() != '\n') stream << std::endl;
+		if(seenLBD)
+		{
+			stream << buffer;
+			if(buffer.back() != '\n') stream << std::endl;
+
+		}
+		if(buffer.substr(0,3) == ChunkerUtil::LBDKEY)
+		{
+			seenLBD = true;
+		}
 	}
 }
 

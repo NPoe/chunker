@@ -46,7 +46,8 @@ protected:
 	const Transcription & getTranscription() const;
 	const Recognition & getRecognition() const;
 	const Chunker * getRootChunker() const;
-	void writeOriginalBPF(std::ostream &) const;
+	void writeOriginalBPFHeader(std::ostream &) const;
+	void writeOriginalBPFBody(std::ostream &) const;
 	void obtainHTKFile();
 	void recognizer();
 	virtual bool recursionNeeded() const = 0;

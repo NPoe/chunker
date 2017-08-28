@@ -13,6 +13,7 @@ const std::string ChunkerUtil::ORTKEY = "ORT";
 const std::string ChunkerUtil::TRNKEY = "TRN";
 const std::string ChunkerUtil::SAMKEY = "SAM";
 const std::string ChunkerUtil::LBDKEY = "LBD";
+const std::string ChunkerUtil::LHDKEY = "LHD";
 const std::string ChunkerUtil::WORDVARSOURCE = "wordvar.mlf";
 const std::string ChunkerUtil::WORDVARTARGET = "wordvar.slf";
 const std::string ChunkerUtil::WORDVARSTEM = "wordvar";

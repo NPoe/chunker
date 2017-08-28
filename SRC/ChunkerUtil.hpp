@@ -22,6 +22,7 @@ public:
 	static const std::string TRNKEY; /**< BPF key for chunk / turn tier */
 	static const std::string SAMKEY; /**< BPF key for sampling rate entry */
 	static const std::string LBDKEY; /**< BPF key for BPF body start */
+	static const std::string LHDKEY; /**< BPF key for BPF body start */
 	static const std::string HLSTATSMLF; /**< /deprecated */
 	static const std::string HLSTATSBACKOFF; /**< /deprecated */
 	static const std::string HLSTATSLATTICE; /**< /deprecated */

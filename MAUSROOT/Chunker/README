@@ -95,7 +95,9 @@ chunker	--language <e.g. deu-DE> --audio <path to audio>
 --audio			<PATH TO AUDIO FILE>
 
 	Path to the input audio file that should be chunk segmented.
-	This file must be a valid mono wave file.
+	This file must be a valid file in one of the following
+	formats: WAVE RIFF (*wav), NIST SPHERE (*nis, *nist, *sph),
+	video (*mp4, *mpeg, *mpg).
 
 --bpf			<PATH TO BPF FILE>
 

@@ -74,3 +74,7 @@
 	if it is not already present
 	- Bugfix: Mistake with priority-based order of chunk
 	boundaries
+
+0.16	- Chunker now accepts the following formats: WAVE RIFF
+	(*wav), NIST SPHERE (*nis/*nist/*sph), *mp4, *mpeg,
+	*mpg.

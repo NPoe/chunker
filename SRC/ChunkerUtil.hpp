@@ -124,6 +124,14 @@ public:
 	 */
 	static std::string getAudioFile(const std::string &);
 
+	/**
+	 * \brief Return path to current chunker's audio file (not downsampled yet)
+	 * \param prefix Current chunker's directory prefix
+	 * \returns path to audio file
+	 *
+	 * Important: The audio file only exists for the topmost chunker!
+	 */
+	static std::string getAudioFileRaw(const std::string &);
 	
 	/**
 	 * \brief Convert string into lowercase
@@ -239,6 +247,16 @@ public:
 	 */
 	static bool isFloatString(const std::string&);
 	
-
+	/**
+	 * \brief Check if string ends with another string (e.g., an extension
+	 * \param string long string
+	 * ¸param extension the extension to be checked
+	 * \returns Whether the long string ends in this extension
+	 */
+	static bool stringEndswith(const std::string&, const std::string&);
+	
+	static bool isWavExtension(const std::string&);
+	static bool isNistExtension(const std::string&);
+	static bool isVideoExtension(const std::string&);
 };
 #endif

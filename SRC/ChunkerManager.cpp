@@ -157,6 +157,18 @@ int ChunkerManager::_currentThreads = 1;
 std::mutex ChunkerManager::_lock;
 std::ofstream ChunkerManager::LOG;
 
+void ChunkerManager::checkSecondaryPrograms()
+{CHUNKER_FLOG
+
+	std::vector<std::string> programs({"ffmpeg", "sox", "soxi", "HCopy", "HVite"});
+
+	for(std::string & program : programs)
+	{
+		std::string cmd("which " + program);
+		ChunkerUtil::wrap(cmd);
+	}
+}
+
 void ChunkerManager::fillOptions()
 {CHUNKER_FLOG
 	for ( auto & option : _indexToValue)
@@ -492,6 +504,7 @@ void ChunkerManager::init(int argc, char** argv)
 {CHUNKER_FLOG
 	LOG.open("/dev/null");
 
+	checkSecondaryPrograms();
 	std::vector<std::string> newArgv;
 
 	for (int i = 0; i < argc; i++)

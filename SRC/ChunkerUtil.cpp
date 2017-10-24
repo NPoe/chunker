@@ -30,6 +30,31 @@ const std::string ChunkerUtil::SEP =
 #else
 	"/";
 #endif
+	
+bool ChunkerUtil::isWavExtension(const std::string& string)
+{
+	return stringEndswith(string, "wav");
+}
+
+bool ChunkerUtil::isNistExtension(const std::string& string)
+{
+	return stringEndswith(string, "nis") or stringEndswith(string, "nist") or stringEndswith(string, "sph");
+}
+
+bool ChunkerUtil::isVideoExtension(const std::string& string)
+{
+	return stringEndswith(string, "mp4") or stringEndswith(string, "mpeg") or stringEndswith(string, "mpg");
+}
+
+bool ChunkerUtil::stringEndswith(const std::string& string, const std::string& extension)
+{
+	if (string.length() < extension.length())
+	{
+		return false;
+	}
+
+	return std::equal(extension.rbegin(), extension.rend(), string.rbegin());
+}
 
 std::string ChunkerUtil::getBPFFile(const std::string & prefix)
 {
@@ -39,6 +64,11 @@ std::string ChunkerUtil::getBPFFile(const std::string & prefix)
 std::string ChunkerUtil::getAudioFile(const std::string & prefix)
 {
 	return prefix + SEP + "AUDIO.wav";
+}
+
+std::string ChunkerUtil::getAudioFileRaw(const std::string & prefix)
+{
+	return prefix + SEP + "AUDIORAW.wav";
 }
 
 std::string ChunkerUtil::getHCopyConfig(const std::string & prefix)

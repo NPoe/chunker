@@ -58,11 +58,11 @@ long TurnTierItem::getDuration() const
 
 	
 
-TurnTier::TurnTier(long duration)
+TurnTier::TurnTier(long duration, long samplingRate)
 {CHUNKER_FLOG
 
 	_duration = duration;
-	_samplingRate = ChunkerUtil::getSamplingRate(ChunkerManager::getOptionString(ChunkerManager::AUDIOFILE));
+	_samplingRate = samplingRate;
 }
 
 bool TurnTier::checkLength() const

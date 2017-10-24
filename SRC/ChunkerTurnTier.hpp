@@ -53,8 +53,9 @@ public:
 	/**
 	 * \brief Constructor
 	 * \param duration Total audio duration
+	 * \param samplingRate Original audio sampling rate
 	 */
-	TurnTier(long);
+	TurnTier(long, long);
 
 	/**
 	 * \brief Derive and build turn tier after chunking

@@ -96,6 +96,11 @@ private:
 	static void readArgv(std::vector<std::string>);
 
 	/**
+	 * \brief Checks if HVite, HCopy, sox, soxi and ffmpeg are installed, throws error otherwise
+	 */
+	static void checkSecondaryPrograms();
+
+	/**
 	 * \brief Read configuation file
 	 * \param configfile Path to configuation file
 	 *

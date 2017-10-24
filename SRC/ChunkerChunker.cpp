@@ -19,10 +19,11 @@ Chunker::Chunker() : _transcription(), _recognition() // Build transcript from o
 	_offset = 0; 
 	_onlyChild = false;
 
+	normalizeAudio();
 	resample();
 	saveBPFFile();	
 	
-	_duration = ChunkerUtil::getAudioDuration(ChunkerManager::getOptionString(ChunkerManager::AUDIOFILE));
+	_duration = ChunkerUtil::getAudioDuration(ChunkerUtil::getAudioFileRaw(_prefix));
 	
 	_progressBarPointer.reset(new ProgressBar(_duration));
 	_silenceOnlyPointer.reset(new std::set<Boundary, Boundary::orderPriorityPauseDuration>);
@@ -250,12 +251,41 @@ void Chunker::prepare()
 	obtainHTKFile(); // Obtain HTK file by converting the input WAVE file or cutting a slice from the parent HTK file
 }
 
+void Chunker::normalizeAudio()
+{
+	std::string audiofile(ChunkerManager::getOptionString(ChunkerManager::AUDIOFILE));
+	std::string cmd;
+
+	if (ChunkerUtil::isWavExtension(audiofile))
+	{
+		cmd = "sox " + audiofile + " -b 16 -c 1 -e signed-integer " + 
+			ChunkerUtil::getAudioFileRaw(_prefix);
+	}
+	else if (ChunkerUtil::isNistExtension(audiofile))
+	{
+		cmd = "sox -t sph " + audiofile + " -b 16 -c 1 -e signed-integer " + 
+			ChunkerUtil::getAudioFileRaw(_prefix);
+	}
+	else if (ChunkerUtil::isVideoExtension(audiofile))
+	{
+		cmd = "ffmpeg -loglevel quiet -y -i " + audiofile + " -acodec pcm_s16le -ac 1 " +
+			ChunkerUtil::getAudioFileRaw(_prefix);
+	}
+	else
+	{
+		CHUNKER_ERR << "Unknown audio file extension in " << audiofile CHUNKER_ENDERR1
+	}
+
+	ChunkerUtil::wrap(cmd);
+}
+
 void Chunker::resample()
 {
-	std::string sox = "sox " + ChunkerManager::getOptionString(ChunkerManager::AUDIOFILE) + " -b 16 -c 1 -e signed-integer -r " + 
+	std::string cmd = "sox " + ChunkerUtil::getAudioFileRaw(_prefix) + " -r " + 
 		std::to_string(ChunkerUtil::STANDARDSAMPLERATE) + " " + ChunkerUtil::getAudioFile(_prefix);
-	ChunkerUtil::wrap(sox);
+	ChunkerUtil::wrap(cmd);
 }
+
 
 void Chunker::obtainHTKFile()
 {CHUNKER_FLOG
@@ -656,7 +686,8 @@ void Chunker::recursion()
 
 std::unique_ptr<TurnTier> ChunkerForced::buildTurnTier() const
 {
-	std::unique_ptr<TurnTier> turnTier(new TurnTier(_duration));
+	long samplingRate = ChunkerUtil::getSamplingRate(ChunkerUtil::getAudioFileRaw(_prefix));
+	std::unique_ptr<TurnTier> turnTier(new TurnTier(_duration, samplingRate));
 	std::set<Boundary, Boundary::orderFinal> results(_silenceOnlyPointer->cbegin(), _silenceOnlyPointer->cend());
 	
 	turnTier->build(results, _transcription.getTokenIterator());
@@ -665,8 +696,9 @@ std::unique_ptr<TurnTier> ChunkerForced::buildTurnTier() const
 
 std::unique_ptr<TurnTier> ChunkerClassic::buildTurnTier() const
 {
+	long samplingRate = ChunkerUtil::getSamplingRate(ChunkerUtil::getAudioFileRaw(_prefix));
 	
-	std::unique_ptr<TurnTier> turnTier(new TurnTier(_duration));
+	std::unique_ptr<TurnTier> turnTier(new TurnTier(_duration, samplingRate));
 	std::set<Boundary, Boundary::orderFinal> results(_silenceOnlyPointer->cbegin(), _silenceOnlyPointer->cend());
 	
 	turnTier->build(results, _transcription.getTokenIterator());
@@ -755,7 +787,7 @@ void Chunker::writeOriginalBPFHeader(std::ostream & stream) const
 	if(!BPFcontainsKey(ChunkerUtil::SAMKEY))
 	{
 		stream << ChunkerUtil::SAMKEY << ": " << 
-			ChunkerUtil::getSamplingRate(ChunkerManager::getOptionString(ChunkerManager::AUDIOFILE)) << std::endl;
+			ChunkerUtil::getSamplingRate(ChunkerUtil::getAudioFileRaw(_prefix)) << std::endl;
 	}
 	
 	stream << ChunkerUtil::LBDKEY << ":" << std::endl;

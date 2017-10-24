@@ -37,6 +37,10 @@ protected:
 	std::set<Boundary, Boundary::orderFinal> _splitPoints; 
 	std::deque<AlignPoint> _path;
 	
+	/** \brief Normalizes audio file to RIFF WAVE (16 bit, 1 channel, original sampling rate) */
+	void normalizeAudio();
+
+	/** \brief Downsamples audio file to 16 kHz */
 	void resample();
 
 	void prepare();

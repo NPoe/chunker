@@ -13,6 +13,7 @@ DOC/README.contents
 
 DOC/MAPoerner.pdf
 	-- Master's thesis on Chunker
+		-- WARNING: not up to date with recent developments
 
 #####################################################################
 
@@ -89,8 +90,8 @@ MAUSROOT/Chunker/chunker.bench
 MAUSROOT/Chunker/Bench/
 	-- benchmark data
 
-MAUSROOT/Chunker/Bench/Audio
-	-- benchmark audio files with naming convention <lng>.*.wav
+MAUSROOT/Chunker/Bench/[WAV|NIS|MPEG]
+	-- benchmark audio files with naming convention <lng>.*.[wav|nis|mpeg]
 		-- <lng> = target language
 
 MAUSROOT/Chunker/Bench/BPF

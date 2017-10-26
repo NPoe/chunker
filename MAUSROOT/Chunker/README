@@ -24,8 +24,8 @@ the following sections:
 #####################################################################
 
 The chunker tool is primarily a pre-processor for the Munich
-Automatic Segmentation Tool [1]. Its inputs consist of a WAVE mono
-audio file and a BPF file containing a canonical pronunciation
+Automatic Segmentation Tool [1]. Its inputs consist of an audio 
+file and a BPF file containing a canonical pronunciation
 tier, as produced by G2P [2]. While it can be used on any audio -
 transcription pair, its main use is on recordings that are longer
 than a approximately five minutes. For more information, see [3].
@@ -96,15 +96,17 @@ chunker	--language <e.g. deu-DE> --audio <path to audio>
 
 	Path to the input audio file that should be chunk segmented.
 	This file must be a valid file in one of the following
-	formats: WAVE RIFF (*wav), NIST SPHERE (*nis, *nist, *sph),
-	video (*mp4, *mpeg, *mpg).
+	formats: WAVE RIFF (*.wav), NIST (*.nis, *.nist, *.sph),
+	video (*.mp4, *.mpeg, *.mpg).
 
 --bpf			<PATH TO BPF FILE>
 
 	Path to the input BPF file. The BPF file should contain a KAN
 	tier with the canonical pronunciation of the transcription. 
 	Any other tiers are ignored. To derive this tier from an 
-	orthographic transcription, you can use the G2P tool.
+	orthographic transcription, you can use the G2P tool. If a 
+	TRN tier is present in the BPF, it is deleted to avoid
+	conflicts with the new TRN tier.
 
 --outfile		<PATH TO OUTPUT FILE>
 
@@ -190,7 +192,7 @@ chunker	--language <e.g. deu-DE> --audio <path to audio>
 
 	If this option is set to true, the chunker runs its
 	alternative 'forced chunking' algorithm. This algorithm
-	runs a factorautomaton language model on a short segment 
+	runs a factor automaton language model on a short segment 
 	in the middle of the signal to find a single boundary. 
 	This process is then repeated recursively, until chunks are 
 	short enough. As factor automaton language models are more
